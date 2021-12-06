@@ -214,3 +214,116 @@ c.course_code = 'DT_RDBMS'
 --- 2 --
 select grade_score from grades where grade_student_epita_email_ref = 'simona.morasca@epita.fr'
 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+SET search_path = Class_Exercise_DataBase, 'JoinTasks'; 
+
+SELECT * FROM categories c
+
+SELECT * FROM customers c
+
+Select contact_name FROM customers ;
+
+Select product_name FROM products ;
+
+SELECT
+   DISTINCT product_name
+FROM
+   products;
+   
+SELECT
+   DISTINCT employee_id
+FROM
+   employees;
+   
+SELECT COUNT(employee_id ) FROM employees;
+
+Select employee_id FROM employees ;
+
+SELECT * FROM orders c
+
+SELECT * FROM order_details c
+
+SELECT SUM((unit_price * quantity) * (1 - discount)) FROM order_details;
+
+SELECT SUM(unit_price ) FROM order_details;
+
+COPY order_details TO 'C:/Users/thosh/Desktop/StudyMaterial' WITH (FORMAT CSV, HEADER);
+
+select DISTINCT extract(year from order_date) FROM orders;
+
+select extract(year from order_date) FROM orders WHERE  order_date >= '1997-1-1'::date;
+
+select * FROM orders WHERE  order_date >= '1997-1-1'::date;
+
+SELECT orders.*
+FROM orders
+  RIGHT JOIN order_details USING (order_id); 
+  
+SELECT COUNT(shipped_date IS NULL)  - COUNT(shipped_date) FROM orders;
+  
+SELECT * FROM orders WHERE ship_country = 'France' OR ship_country = 'Belgium' ;
+
+SELECT COUNT(country) FROM customers  WHERE country = 'France';
+
+
+ALTER TABLE ONLY order_details
+    ADD CONSTRAINT fk_Order_facid FOREIGN KEY (order_id) REFERENCES orders(order_id);
+	
+SELECT * FROM order_details c
+SELECT * FROM orders c
+
+SELECT SUM((unit_price * quantity) * (1 - discount)) FROM order_details 
+LEFT JOIN orders on order_details.order_id = orders.order_id where order_date BETWEEN '1997-01-01' AND '1997-12-31'
+
+SELECT * FROM order_details 
+LEFT JOIN orders on order_details.order_id = orders.order_id where order_date BETWEEN '1997-01-01' AND '1997-12-31'
+
+SELECT * FROM region 
+
+SELECT company_name FROM suppliers
+
+SELECT country, COUNT(country) from customers group by country;
+
+SELECT COUNT(country) from customers group by country;
+
+select product_name,unit_price from products ORDER BY unit_price DESC
+
+select * from products
+
+SELECT category_id, COUNT(category_id) from products group by category_id;
+
+select * from order_details
+
+SELECT SUM((unit_price * quantity) * (1 - discount)) / COUNT(order_id) FROM order_details 
+
+SELECT category_id, SUM(unit_price * units_on_order) from products group by category_id;
+
+SELECT category_id, COUNT(category_id) from products group by category_id;
+
+select * from orders
+
+SELECT employee_id, COUNT(employee_id) from orders group by employee_id;
+
+SELECT supplier_id, SUM(unit_price * units_on_order) from products group by supplier_id;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+select distinct ship_country from orders order by ship_country asc
+
+select * from order_details
+
+select count(order_id) from orders where shipped_date is not null
+
+SELECT * FROM orders WHERE ship_country ilike 'France' OR ship_country ilike 'Belgium' ;
+
+select product_name from products order by unit_price desc limit 5
+
+select product_name from products where discontinued = 0;
+
+SELECT category_id, COUNT(product_id) from products group by category_id;
+
+SELECT SUM (unit_price * quantity) / COUNT(order_id) FROM order_details
+
+SELECT SUM((unit_price * quantity) * (1 - discount)) / COUNT(order_id) FROM order_details 
+
+select count(distinct(product_id)) from order_details
