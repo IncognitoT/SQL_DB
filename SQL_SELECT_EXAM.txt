@@ -1,1 +1,236 @@
 Hello...Can you use this page??
+
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using System.Xml.Serialization;
+
+namespace exam
+{
+    public enum Category
+    {
+        COUNTRY,
+        URBAN,
+        SHORE
+    }
+
+    class Program
+    {
+        
+        static void Main(string[] args)
+        {
+            Program program = new Program();
+            program.work();
+
+        }
+
+        void work()
+        {
+            RealEstateAgency estateAgency = new RealEstateAgency();
+
+            Console.Write("Have an XML File? (Y/N) ");
+
+            string ipVal = Console.ReadLine();
+
+            if (ipVal == "Y" || ipVal == "y")
+            {
+                estateAgency.XmlInit();
+            }
+            else
+            {
+                estateAgency.DefaultInit();
+            }
+
+            Console.WriteLine("BASE SHOP CATALOG");
+            Console.WriteLine(estateAgency.ToString());
+            estateAgency.Sort();
+            Console.WriteLine("SORTED SHOP CATALOG");
+            Console.WriteLine(estateAgency.ToString());
+
+        }
+    }
+
+    [XmlInclude(typeof(Mansion))]
+    [XmlInclude(typeof(Studio))]
+    [XmlInclude(typeof(House))]
+    public abstract class PropertyToRent : IComparable
+    {
+        private Category m_category;
+        public Category category
+        {
+            get { return this.m_category; }
+            set { this.m_category = value; }
+        }
+
+        private string _name;
+        public string Name
+        {
+            get { return this._name; }
+            set { this._name = value; }
+        }
+
+        private int m_surface;
+        public int Surface
+        {
+            get { return this.m_surface; }
+            set { this.m_surface = value; }
+        }
+
+        private int m_price;
+        public int Price
+        {
+            get { return this.m_price; }
+            set { this.m_price = value; }
+        }
+
+        public PropertyToRent(string name, Category catVal, int surface, int price)
+        {
+            Name = name;
+            category = catVal;
+            Surface = surface;
+            Price = price;
+        }
+
+        public int CompareTo(object obj)
+        {
+            return Price.CompareTo((obj as PropertyToRent).Price);
+        }
+
+        public override string ToString()
+        {
+            return category + " Price=" + Price + "\t@=" + Name + " Surface=" + Surface;
+        }
+
+        public abstract int Taxes();
+
+        public PropertyToRent() 
+        { 
+        }
+    }
+
+    public class House : PropertyToRent
+    {
+        public House(string name_, Category category_, int price_, int surface_)
+        {
+            Name = name_;
+            category = category_;
+            Price = price_;
+            Surface = surface_;
+        }
+
+        public House() 
+        { 
+        }
+
+        public override int Taxes()
+        {
+            return 0;
+        }
+    }
+
+    public class Studio : PropertyToRent
+    {
+        public Studio(string name_, Category category_, int price_, int surface_)
+        {
+            Name = name_;
+            category = category_;
+            Price = price_;
+            Surface = surface_;
+        }
+
+        public Studio() 
+        {
+        }
+
+        public override int Taxes()
+        {
+            return 0;
+        }
+    }
+
+
+    public class Mansion : PropertyToRent
+    {
+        public Mansion(string name_, Category category_, int price_, int surface_)
+        {
+            Name = name_;
+            category = category_;
+            Price = price_;
+            Surface = surface_;
+        }
+        public Mansion() { }
+
+        public override int Taxes()
+        {
+            return 0;
+        }
+    }
+
+    public class RealEstateAgency
+    {
+        private List<PropertyToRent> _Rentals = new List<PropertyToRent>();
+
+        public void DefaultInit()
+        {
+            _Rentals.Add(new Studio("Les Raisins, flat 5", Category.COUNTRY, 300, 30));
+            _Rentals.Add(new House("Mon Abri Cotier", Category.COUNTRY, 1200, 300));
+            _Rentals.Add(new Mansion("Les Grands Platanes", Category.URBAN, 3000, 1000));
+            _Rentals.Add(new Studio("Les Hautes Grarennes, flat 56", Category.URBAN, 250, 25));
+            _Rentals.Add(new House("La Brise", Category.SHORE, 960, 200));
+            _Rentals.Add(new House("La Chaumiere", Category.COUNTRY, 800, 150));
+            _Rentals.Add(new Mansion("Les Ratelieres", Category.SHORE, 2800, 1200));
+            _Rentals.Add(new Studio("Les basses plaines", Category.URBAN, 700, 47));
+            _Rentals.Add(new Mansion("La Lanterne", Category.URBAN, 3500, 600));
+            _Rentals.Add(new Studio("La Courvieille, flat 34", Category.COUNTRY, 340, 26));
+            _Rentals.Add(new House("Ici chez moi", Category.URBAN, 780, 230));
+            _Rentals.Add(new Studio("Les Saules, flat 135", Category.SHORE, 390, 30));
+
+            ToXML();
+        }
+
+        public void ToXML()
+        {
+            List<PropertyToRent> retalItems = _Rentals;
+
+            XmlSerializer xs = new XmlSerializer(typeof(List<PropertyToRent>));
+
+            using (StreamWriter wr = new StreamWriter("C:/Users/thosh/Desktop/StudyMaterial/DotNetAndCSharp/EXAMitemsOp.xml"))
+            {
+                xs.Serialize(wr, retalItems);
+            }
+        }
+
+        public void Sort()
+        {
+            _Rentals.Sort();
+        }
+
+        public override string ToString()
+        {
+
+            StringBuilder concatStr = new StringBuilder();
+
+            foreach (var rents in _Rentals)
+            {
+                concatStr.AppendLine(rents.ToString());
+            }
+            return concatStr.ToString();
+
+        }
+
+        public void XmlInit()
+        {
+            PropertyToRent[] propRetals;
+
+            XmlSerializer xs = new XmlSerializer(typeof(PropertyToRent[]));
+
+            using (StreamReader rd = new StreamReader("/Users/fashaan/Documents/Programming/C#/exam/rentals.xml"))
+            {
+                propRetals = xs.Deserialize(rd) as PropertyToRent[];
+            }
+
+        }
+    }
+}
